@@ -26,6 +26,11 @@ services:
     networks:
       - perplexica-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   perplexica-frontend:
     build:
@@ -41,6 +46,11 @@ services:
     networks:
       - perplexica-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   perplexica-network:
