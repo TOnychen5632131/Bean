@@ -8,6 +8,11 @@ services:
     networks:
       - perplexica-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   perplexica-backend:
     build:
@@ -16,7 +21,8 @@ services:
       args:
         - SEARXNG_API_URL=http://searxng:8080
     depends_on:
-      - searxng
+      searxng:
+        condition: service_healthy
     ports:
       - 3001:3001
     volumes:
@@ -40,7 +46,8 @@ services:
         - NEXT_PUBLIC_API_URL=http://127.0.0.1:3001/api
         - NEXT_PUBLIC_WS_URL=ws://127.0.0.1:3001
     depends_on:
-      - perplexica-backend
+      perplexica-backend:
+        condition: service_healthy
     ports:
       - 3000:3000
     networks:
